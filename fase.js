@@ -8,16 +8,16 @@ const cw = canvas.width;
 const ch = canvas.height;
 
 const actx = new AudioContext();
-let reverbNode;
 
 const SEQUENCE_LENGTH = 12;
 const NUM_NOTES = 12;
 const SIDE_LENGTH = ch / NUM_NOTES;
 
-// 55x55 squres
-
 let notes;
 let pianoBuffer = [];
+let root = 64;
+let tempo = 40;
+let reverbNode;
 
 function makeNotes() {
     notes = [];
@@ -143,16 +143,32 @@ function playNote(note, delay) {
     let source = actx.createBufferSource();
     source.buffer = pianoBuffer[note];
     source.connect(reverbNode);
-    source.start(delay);
+    source.start(actx.currentTime + delay);
 }
 
 function play() {
-    playNote(60, 0);
-    const colTime = 200;
-    for (var column; column < SEQUENCE_LENGTH; column++) {
-        for (var row; row < NUM_NOTES; row++) {
-            if (notes[column][row] == 1) {
-                playNote(NUM_NOTES - row, column * colTime);
+    const cycleLength = 8;
+    const transitionLength = 2;
+    const bartime = 60 / tempo;
+    const notetime = bartime / SEQUENCE_LENGTH;
+    const transitionNoteTime = (bartime * transitionLength) / (SEQUENCE_LENGTH * transitionLength + 1);
+
+    var p1delay = 0;
+    var p2delay = 0;
+    for (var bar = 0; bar < 48; bar++) {
+        for (var column = 0; column < SEQUENCE_LENGTH; column++) {
+            for (var row = 0; row < NUM_NOTES; row++) {
+                if (notes[column][row] == 1) {
+                    const note = root + NUM_NOTES - row;
+                    playNote(note, p1delay);
+                    playNote(note, p2delay);
+                }
+            }
+            p1delay += notetime;
+            if (bar % cycleLength < (cycleLength - transitionLength)) {
+                p2delay += notetime;
+            } else {
+                p2delay += transitionNoteTime;
             }
         }
     }
@@ -163,7 +179,7 @@ $('play').addEventListener('click', play);
 function main() {
     makeNotes();
     drawGrid();
-    drawPiano(60);
+    drawPiano(root);
     loadReverb();
     loadPiano();
 }
