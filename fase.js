@@ -59,7 +59,12 @@ function drawPiano(root) {
     let offset = (root - 60) % 12;
     ctx.fillStyle = 'black';
     for (let i = 0; i < NUM_NOTES; i++) {
-        if (pattern[(i + offset) % pattern.length]) {
+        let index = (i + offset) % pattern.length;
+        if (index < 0) {
+            index = pattern.length + index;
+        }
+
+        if (pattern[index]) {
             let y = ch - ((i + 1) * SIDE_LENGTH);
             ctx.fillRect(0, y, SIDE_LENGTH, SIDE_LENGTH);
         }
