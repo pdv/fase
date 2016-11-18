@@ -7,7 +7,7 @@ const ctx = canvas.getContext('2d');
 const cw = canvas.width;
 const ch = canvas.height;
 
-const actx = new AudioContext();
+var actx = new AudioContext();
 
 const SEQUENCE_LENGTH = 12;
 const NUM_NOTES = 12;
@@ -15,8 +15,7 @@ const SIDE_LENGTH = ch / NUM_NOTES;
 
 let notes;
 let pianoBuffer = [];
-let root = 64;
-let tempo = 40;
+let root = 60;
 let reverbNode;
 
 function makeNotes() {
@@ -147,21 +146,23 @@ function playNote(note, delay) {
 }
 
 function play() {
-    const cycleLength = 8;
-    const transitionLength = 2;
-    const bartime = 60 / tempo;
+    const cycleLength = 16;
+    const transitionLength = 4;
+    const bartime = 60 / $('tempo').value;
     const notetime = bartime / SEQUENCE_LENGTH;
     const transitionNoteTime = (bartime * transitionLength) / (SEQUENCE_LENGTH * transitionLength + 1);
 
     var p1delay = 0;
     var p2delay = 0;
-    for (var bar = 0; bar < 48; bar++) {
+    for (var bar = 0; bar < 100; bar++) {
         for (var column = 0; column < SEQUENCE_LENGTH; column++) {
             for (var row = 0; row < NUM_NOTES; row++) {
                 if (notes[column][row] == 1) {
                     const note = root + NUM_NOTES - row;
                     playNote(note, p1delay);
-                    playNote(note, p2delay);
+                    if (bar > cycleLength - transitionLength) {
+                        playNote(note, p2delay);
+                    }
                 }
             }
             p1delay += notetime;
@@ -174,13 +175,36 @@ function play() {
     }
 }
 
+
 $('play').addEventListener('click', play);
+$('stop').addEventListener('click', reloadAudio);
+
+$('rootUp').addEventListener('click', () => {
+    root++;
+    redraw();
+});
+
+$('rootDown').addEventListener('click', () => {
+    root--;
+    redraw();
+});
+
+function redraw() {
+    ctx.clearRect(0, 0, cw, ch);
+    drawGrid();
+    drawPiano(root);
+}
+
+function reloadAudio() {
+    actx.close();
+    actx = new AudioContext();
+    loadReverb();
+}
 
 function main() {
     makeNotes();
-    drawGrid();
-    drawPiano(root);
-    loadReverb();
+    redraw();
+    reloadAudio();
     loadPiano();
 }
 
