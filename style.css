@@ -12,12 +12,12 @@ html, body, div {
 }
 
 #content {
-    width: 1250px;
-    height: 1000px;
+    width: 960px;
+    height: 720px;
     position: absolute;
     top: 50%;
     left: 50%;
-    margin: -500px 0 0 -625px;
+    margin: -360px 0 0 -480px;
 }
 
 
@@ -29,6 +29,12 @@ html, body, div {
     float: left;
 }
 
+#screen {
+    height: 700px;
+    width: 700px;
+    padding: 10px;
+    float: left;
+}
 
 
 
