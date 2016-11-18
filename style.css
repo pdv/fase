@@ -1,0 +1,36 @@
+
+html, body, div {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+#content {
+    width: 1250px;
+    height: 1000px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -500px 0 0 -625px;
+}
+
+
+#controls {
+    padding: 10px;
+    width: 220px;
+    height: 700px;
+    font-family: Input Sans Narrow, Helvetica, sans-serif;
+    float: left;
+}
+
+
+
+
+
+
