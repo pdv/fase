@@ -15,6 +15,8 @@ const SIDE_LENGTH = ch / NUM_NOTES;
 
 let notes;
 let pianoBuffer = [];
+let marimbaBuffer;
+let clapBuffer;
 let root = 60;
 let reverbNode;
 
@@ -137,6 +139,14 @@ function loadPiano() {
     }
 }
 
+function loadMarimba() {
+    loadSound('marimba/g3.wav', (buffer) => marimbaBuffer = buffer);
+}
+
+function loadClap() {
+    loadSound('clap/clap.wav', (buffer) => clapBuffer = buffer);
+}
+
 function loadReverb() {
     reverbNode = actx.createConvolver();
     loadSound('StAndrewsChurch.wav', (buffer) => reverbNode.buffer = buffer);
@@ -145,8 +155,24 @@ function loadReverb() {
 
 function playNote(note, delay) {
     let source = actx.createBufferSource();
-    source.buffer = pianoBuffer[note];
-    source.connect(reverbNode);
+    let gain = actx.createGain();
+    if ($('instrument').value == 'piano') {
+        source.buffer = pianoBuffer[note];
+        gain.gain.value = 0.7;
+    } else if ($('instrument').value == 'marimba') {
+        source.buffer = marimbaBuffer;
+        const interval = note - 55;
+        source.playbackRate.value = 1 * Math.pow(2**interval, 1/12);
+        gain.gain.value = 1.8;
+    } else if ($('instrument').value == 'clap') {
+        source.buffer = clapBuffer;
+    }
+    source.connect(gain);
+    if ($('reverb').checked) {
+        gain.connect(reverbNode);
+    } else {
+        gain.connect(actx.destination);
+    }
     source.start(actx.currentTime + delay);
 }
 
@@ -211,6 +237,8 @@ function main() {
     redraw();
     reloadAudio();
     loadPiano();
+    loadMarimba();
+    loadClap();
 }
 
 

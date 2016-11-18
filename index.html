@@ -11,12 +11,22 @@
                     <h1>fase</h1>
                     <button id="play">Play</button>
                     <button id="stop">Stop</button>
+
                     <p>Tempo</p>
                     <input id="tempo" type="range" min="10" max="80" value="40" step="1" />
-                    <p>Root Note
-                        <button id="rootDown">Down</button>
-                        <button id="rootUp">Up</button>
-                    </p>
+
+                    <p>Root Note</p>
+                    <button id="rootDown">Down</button>
+                    <button id="rootUp">Up</button>
+
+                    <p>Instrument</p>
+                    <select id="instrument">
+                        <option value="piano">Piano</option>
+                        <option value="marimba">Marimba</option>
+                        <option value="clap">Clap</option>
+                    </select>
+
+                    <p>Reverb <input id="reverb" type="checkbox" /></p>
                 </div>
 
                 <canvas id="canvas" width="715" height="660"></canvas>
