@@ -13,17 +13,26 @@ const SIDE_LENGTH = ch / NUM_NOTES;
 
 // 55x55 squres
 
+let notes;
+
 canvas.addEventListener('click', (e) => {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    onRectClicked(Math.floor(x / SIDE_LENGTH), Math.floor(y / SIDE_LENGTH));
+    const column = Math.floor(x / SIDE_LENGTH);
+    const row = Math.floor(y / SIDE_LENGTH);
+    if (column > 0) {
+        onRectClicked(column - 1, row);
+    }
 });
 
-function noteGrid() {
-    let notes = [];
+function makeNotes() {
+    notes = [];
     for (let i = 0; i < SEQUENCE_LENGTH; i++) {
         notes[i] = [];
+        for (let j = 0; j < NUM_NOTES; j++) {
+            notes[i][j] = 0;
+        }
     }
     return notes;
 }
@@ -61,18 +70,35 @@ function drawPiano(root) {
     }
 }
 
-function onRectClicked(column, row) {
-    if (column == 0) {
-        return;
-    }
-    const x = column * SIDE_LENGTH + 1;
+function fillBox(column, row, color) {
+    const x = (column + 1) * SIDE_LENGTH + 1;
     const y = row * SIDE_LENGTH + 1;
-    ctx.fillStyle = 'rgb(0,' + (255 - column * 10) + ',' + (255 - row * 10) + ')';
+    ctx.fillStyle = color;
     ctx.fillRect(x, y, SIDE_LENGTH - 2, SIDE_LENGTH - 2);
 }
 
+function clearBox(column, row) {
+    fillBox(column, row, 'white');
+}
+
+function colorBox(column, row) {
+    const color = 'rgb(0,' + (255 - column * 10) + ',' + (255 - row * 10) + ')';
+    fillBox(column, row, color);
+}
+
+function onRectClicked(column, row) {
+
+    if (notes[column][row] == 0) {
+        colorBox(column, row);
+        notes[column][row] = 1;
+    } else {
+        clearBox(column, row);
+        notes[column][row] = 0;
+    }
+}
+
 function main() {
-    let notes = noteGrid();
+    makeNotes();
     drawGrid();
     drawPiano(60);
 }
