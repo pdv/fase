@@ -191,9 +191,7 @@ function play() {
                 if (notes[column][row] == 1) {
                     const note = root + NUM_NOTES - row;
                     playNote(note, p1delay);
-                    if (bar > cycleLength - transitionLength) {
-                        playNote(note, p2delay);
-                    }
+                    playNote(note, p2delay);
                 }
             }
             p1delay += notetime;
